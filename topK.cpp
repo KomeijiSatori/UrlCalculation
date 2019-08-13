@@ -4,12 +4,14 @@
 #include <fstream>
 #include <sstream>
 #include "consts.h"
+#include "heap.h"
 #include "topK.h"
 
 void getTopK() {
     // using priority queue to maintain heap
-    auto cmp = [](pair<string, long long> &a, pair<string, long long> &b)-> bool { return a.second > b.second; };
-    priority_queue<pair<string, long long>, vector<pair<string, long long> >, decltype(cmp) > que(cmp);
+    auto cmp = [](pair<string, long long> const &a, pair<string, long long> const &b)-> bool { return a.second > b.second; };
+
+    heap<pair<string, long long> > h(TOPK, cmp);
     for (int i = 0; i < PARTITION_NUMBER; i++) {
         string const in_file_dir = string(COUNT_DIR) + to_string(i);
         ifstream in_file(in_file_dir);
@@ -19,31 +21,17 @@ void getTopK() {
         while (getline(in_file, line) && !line.empty()) {
             istringstream iss(line);
             iss >> url >> count;
-            // not reach topK, then add
-            if (que.size() < TOPK) {
-                que.push(pair<string, long long>(url, count));
-            } else if (count > que.top().second) {
-                // if bigger than the smallest in heap, pop the smallest and add the number
-                que.pop();
-                que.push(pair<string, long long>(url, count));
-            }
+            auto cur = pair<string, long long>(url, count);
+            h.add(cur);
         }
         in_file.close();
     }
-
-    // reverse the queue to sort by occurrence descend
-    stack<pair<string, long long> > st;
-    while (!que.empty()) {
-        st.push(que.top());
-        que.pop();
-    }
+    vector<pair<string, long long> > res = h.clearHeap();
 
     // write to file
     ofstream out_file(OUTPUT_DIR, ios::out);
-    while (!st.empty()) {
-        auto itr = st.top();
-        out_file << itr.first << " " << itr.second << endl;
-        st.pop();
+    for (auto reco : res) {
+        out_file << reco.first << " " << reco.second << endl;
     }
     out_file.close();
 }

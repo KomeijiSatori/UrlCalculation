@@ -20,7 +20,7 @@ void getPartitions() {
     ofstream out_files[PARTITION_NUMBER];
     for (int i = 0; i < PARTITION_NUMBER; i++) {
         string const file_dir = string(PARTITION_DIR) + to_string(i);
-        out_files[i].open(file_dir, ios_base::app);
+        out_files[i].open(file_dir, ios::out);
     }
 
     string url;
