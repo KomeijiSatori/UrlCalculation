@@ -19,9 +19,9 @@ main.o : main.cpp
 	$(CC) -c -g main.cpp
 partition.o : partition.cpp consts.h
 	$(CC) -c -g partition.cpp
-count.o : count.h consts.h
+count.o : count.h consts.h heap.h
 	$(CC) -c -g count.cpp
-topK.o : topK.h consts.h
+topK.o : topK.h consts.h heap.h
 	$(CC) -c -g topK.cpp
 test.o : test.cpp
 	$(CC) -c -g test.cpp
